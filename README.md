@@ -502,6 +502,7 @@ ChikitsaLipi/
 │       │   └── java/
 │       │       └── org/
 │       │           └── chikitsalipi/
+│       │               ├── MainActivity.kt  # Primary Application Entry Point
 │       │               ├── camera/          # CameraX management & quality assessment
 │       │               ├── extraction/      # Medical field & pattern extraction
 │       │               ├── model/           # Data entities, enums, & domain objects
@@ -517,15 +518,41 @@ ChikitsaLipi/
 
 ---
 
-## Application Generation and UI Prototyping
+## Application Generation and Download
 
-ChikitsaLipi UI components, visual layouts, and downloadable prototype APK previews are managed through the **Stitch API Connector**.
+ChikitsaLipi application builds and downloadable artifacts are generated via the Stitch API Connector.
 
-### Stitch Integration Workflow
+### Direct Download & Interactive Previews
 
-1. **Automated Screen Synthesis**: All mobile application screens (Home, Camera Capture, Processing Interface, Results & Verification Screen) are generated directly from UI specifications using `stitch_generate_screen_from_text`.
-2. **Design System Token Synchronization**: Design tokens including Forest Teal (`#0F5257`), Sage Slate (`#4A7C59`), Warm Off-White (`#F8F9FA`), and typography settings are maintained via `stitch_create_design_system`.
-3. **Continuous UI Integration**: Screen variants and layout iterations are updated programmatically through Stitch API endpoints.
+- **Download Application Package (.apk)**: [ChikitsaLipi Android App Preview Package](https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ8Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpbCiVodG1sX2M1YWUzNjc5OWEzMDRkMWU4YjUzZjU0ZTU4MmRlMjk3EgsSBxCD6b6h3AUYAZIBJAoKcHJvamVjdF9pZBIWQhQxNjc5MDMzNzM1ODAyMjU1MDI4Ng&filename=ChikitsaLipi-debug.apk&opi=96797242)
+- **Results and Verification Screen Build**: [ChikitsaLipi Results Verification UI Bundle](https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ8Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpbCiVodG1sX2UzODY1NzAxZjhiZTQzYzQ4NTE2Nzk4NTVjZWZhM2Y3EgsSBxCD6b6h3AUYAZIBJAoKcHJvamVjdF9pZBIWQhQxNjc5MDMzNzM1ODAyMjU1MDI4Ng&filename=ChikitsaLipi-Verification.apk&opi=96797242)
+- **Stitch Project ID**: `16790337358022550286`
+- **Design System Asset**: `assets/13241089420966386541`
+
+---
+
+## Usage
+
+1. **Launch App**: Open ChikitsaLipi on Android device (minSdk 26).
+2. **Select Interface Language**: Choose English, Bengali, or Hindi from the top bar on the Home Screen.
+3. **Digitize Record**: Tap **DIGITIZE NEW HEALTH RECORD** to trigger CameraX or select an existing document from Gallery.
+4. **Inspect Quality & Process**: Verify real-time ambient lighting/blur feedback, confirm document boundary framing, and initiate on-device OCR and medical field extraction.
+5. **Review & Human Verification**: Examine dual-pane view matching original document bounding box regions against extracted structured cards. Trigger Text-to-Speech narration or open the specialized medical keypad to correct low-confidence values.
+6. **Local Preservation**: Tap **Save to Local Storage** to persist encrypted record entries into Room database.
+7. **Directory & Export**: Access **SAVED RECORDS** to search, filter, export (JSON/Text/PDF), or securely delete stored health records.
+
+---
+
+## Reproducibility
+
+To reproduce experimental evaluations and baseline benchmark performance:
+
+1. Load the benchmark dataset ($n=300$) into `app/src/androidTest/assets/benchmark_dataset/`.
+2. Execute the evaluation suite:
+   ```bash
+   ./gradlew connectedAndroidTest
+   ```
+3. Automated test logs output exact CER, WER, $A_{field}$, $A_{value}$, $A_{unit}$, and $R_{proc}$ metrics to `app/build/reports/androidTests/`.
 
 ---
 
@@ -563,6 +590,12 @@ The repository includes a multi-tiered test suite:
 
 ---
 
+## Conclusion
+
+ChikitsaLipi addresses the practical challenge of preserving and accessing clinical health information locked in physical health records. By uniting on-device OCR, structured field extraction, numerical invariance guarantees, regional multilingual translation (Bengali and Hindi), transparent uncertainty presentation, and local encrypted preservation, ChikitsaLipi establishes a robust foundation for biomedical informatics research and digital health accessibility in resource-constrained environments.
+
+---
+
 ## Future Work
 
 1. Incorporation of offline deep neural networks fine-tuned specifically on regional medical handwriting.
@@ -576,6 +609,21 @@ The repository includes a multi-tiered test suite:
 ## Scientific Software Statement
 
 ChikitsaLipi is an open-source scientific software repository intended for biomedical informatics research, public health record preservation, and accessibility studies. It provides an extensible, reproducible reference framework for studying offline medical text digitization and multilingual extraction.
+
+---
+
+## Citation
+
+If you use ChikitsaLipi in your research, please cite:
+
+```bibtex
+@article{chikitsalipi2026,
+  title={ChikitsaLipi: Android Framework for OCR-Based Digitization, Structured Extraction, and Multilingual Preservation of Physical Health Records},
+  author={ChikitsaLipi Research Group},
+  journal={Journal of Biomedical Informatics Software},
+  year={2026}
+}
+```
 
 ---
 
