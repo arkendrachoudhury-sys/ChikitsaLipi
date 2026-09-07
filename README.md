@@ -184,35 +184,38 @@ The application avoids hidden navigation, ambiguous gestures, irreversible actio
 
 Use a single primary application navigation graph:
 
-```text
-Home
-├── Capture
-│   ├── Camera Permission
-│   ├── Camera Viewfinder
-│   ├── Capture Preview
-│   └── Processing
-│       ├── Processing Success
-│       ├── Processing Failure
-│       └── Processing Cancelled
-│
-├── Saved Records
-│   ├── Search
-│   ├── Filters
-│   └── Record Detail
-│       ├── Source Document
-│       ├── OCR Text
-│       ├── Structured Fields
-│       ├── Translation
-│       ├── Field Editor
-│       ├── Export
-│       └── Delete Confirmation
-│
-└── Settings
-    ├── Interface Language
-    ├── Translation Settings
-    ├── Accessibility
-    ├── Storage
-    └── Privacy Information
+```mermaid
+flowchart TD
+    NAV_HOME[Home] --> NAV_CAP[Capture]
+    NAV_HOME --> NAV_SR[Saved Records]
+    NAV_HOME --> NAV_SET[Settings]
+
+    NAV_CAP --> NAV_PERM[Camera Permission]
+    NAV_CAP --> NAV_VIEW[Camera Viewfinder]
+    NAV_CAP --> NAV_PREV[Capture Preview]
+    NAV_CAP --> NAV_PROC[Processing]
+
+    NAV_PROC --> NAV_PSUCC[Processing Success]
+    NAV_PROC --> NAV_PFAIL[Processing Failure]
+    NAV_PROC --> NAV_PCANC[Processing Cancelled]
+
+    NAV_SR --> NAV_SRCH[Search]
+    NAV_SR --> NAV_FILT[Filters]
+    NAV_SR --> NAV_DET[Record Detail]
+
+    NAV_DET --> NAV_SRC[Source Document]
+    NAV_DET --> NAV_OCR[OCR Text]
+    NAV_DET --> NAV_FLD[Structured Fields]
+    NAV_DET --> NAV_TRANS[Translation]
+    NAV_DET --> NAV_EDIT[Field Editor]
+    NAV_DET --> NAV_EXP[Export]
+    NAV_DET --> NAV_DEL[Delete Confirmation]
+
+    NAV_SET --> NAV_LANG[Interface Language]
+    NAV_SET --> NAV_TSET[Translation Settings]
+    NAV_SET --> NAV_ACC[Accessibility]
+    NAV_SET --> NAV_STOR[Storage]
+    NAV_SET --> NAV_PRIV[Privacy Information]
 ```
 
 Primary user journey:
