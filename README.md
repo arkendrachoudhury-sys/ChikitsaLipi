@@ -26,34 +26,21 @@ The central design philosophy prioritizes human-in-the-loop verification, transp
 
 The application is built following Clean Architecture and MVVM (Model-View-ViewModel) design principles, enforcing strict separation of concerns across functional layers aligned directly with the system flowchart:
 
-```
-Camera Input
-      ↓
-Image Quality Assessment
-      ↓
-Image Preprocessing
-      ↓
-OCR Engine
-      ↓
-OCR Text + Bounding Boxes
-      ↓
-Language Identification
-      ↓
-Medical Entity Extraction
-      ↓
-Value and Unit Detection
-      ↓
-Validation
-      ↓
-Confidence / Uncertainty Assessment
-      ↓
-Translation
-      ↓
-User Verification
-      ↓
-Local Encrypted Storage
-      ↓
-Record Retrieval / Export
+```mermaid
+flowchart TD
+    SA1[Camera Input] --> SA2[Image Quality Assessment]
+    SA2 --> SA3[Image Preprocessing]
+    SA3 --> SA4[OCR Engine]
+    SA4 --> SA5[OCR Text + Bounding Boxes]
+    SA5 --> SA6[Language Identification]
+    SA6 --> SA7[Medical Entity Extraction]
+    SA7 --> SA8[Value and Unit Detection]
+    SA8 --> SA9[Validation]
+    SA9 --> SA10[Confidence / Uncertainty Assessment]
+    SA10 --> SA11[Translation]
+    SA11 --> SA12[User Verification]
+    SA12 --> SA13[Local Encrypted Storage]
+    SA13 --> SA14[Record Retrieval / Export]
 ```
 
 ```
