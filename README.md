@@ -517,34 +517,15 @@ ChikitsaLipi/
 
 ---
 
-## Installation
+## Application Generation and UI Prototyping
 
-### Prerequisites
-- Android Studio Jellyfish (2023.3.1) or newer
-- Android SDK 34 (Target SDK 34, Minimum SDK 26)
-- JDK 17
-- Gradle 8.4+
+ChikitsaLipi UI components, visual layouts, and downloadable prototype APK previews are managed through the **Stitch API Connector**.
 
-### Build Instructions
+### Stitch Integration Workflow
 
-1. Clone repository:
-   ```bash
-   git clone https://github.com/chikitsalipi/chikitsalipi-android.git
-   cd chikitsalipi-android
-   ```
-2. Open project in Android Studio.
-3. Synchronize Gradle project dependencies:
-   ```bash
-   ./gradlew build
-   ```
-4. Assemble debug APK:
-   ```bash
-   ./gradlew assembleDebug
-   ```
-5. Install on connected physical device:
-   ```bash
-   ./gradlew installDebug
-   ```
+1. **Automated Screen Synthesis**: All mobile application screens (Home, Camera Capture, Processing Interface, Results & Verification Screen) are generated directly from UI specifications using `stitch_generate_screen_from_text`.
+2. **Design System Token Synchronization**: Design tokens including Forest Teal (`#0F5257`), Sage Slate (`#4A7C59`), Warm Off-White (`#F8F9FA`), and typography settings are maintained via `stitch_create_design_system`.
+3. **Continuous UI Integration**: Screen variants and layout iterations are updated programmatically through Stitch API endpoints.
 
 ---
 
