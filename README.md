@@ -486,34 +486,36 @@ The evaluation methodology uses a structured testing benchmark:
 
 ## Repository Structure
 
-```
-ChikitsaLipi/
-├── README.md
-├── build.gradle.kts
-├── settings.gradle.kts
-├── gradle.properties
-├── gradle/
-│   └── libs.versions.toml
-├── app/
-│   ├── build.gradle.kts
-│   └── src/
-│       ├── main/
-│       │   ├── AndroidManifest.xml
-│       │   └── java/
-│       │       └── org/
-│       │           └── chikitsalipi/
-│       │               ├── MainActivity.kt  # Primary Application Entry Point
-│       │               ├── camera/          # CameraX management & quality assessment
-│       │               ├── extraction/      # Medical field & pattern extraction
-│       │               ├── model/           # Data entities, enums, & domain objects
-│       │               ├── ocr/             # ML Kit text recognition wrappers
-│       │               ├── preprocessing/   # Open-CV / Bitmap image filters & crop
-│       │               ├── storage/         # Room Database & Keystore security
-│       │               ├── translation/     # Multilingual translation handlers
-│       │               ├── ui/              # Jetpack Compose UI screens & theme
-│       │               ├── utils/           # Helper utilities & logging
-│       │               └── verification/    # Human verification logic & rules
-│       └── test/                            # Unit tests
+```mermaid
+flowchart TD
+    classDef root fill:#0F5257,stroke:#0A3B3F,color:#FFFFFF,stroke-width:2px;
+    classDef file fill:#F8F9FA,stroke:#0F5257,color:#0F5257,stroke-width:1px;
+    classDef dir fill:#4A7C59,stroke:#2E5338,color:#FFFFFF,stroke-width:1px;
+    classDef module fill:#E0EFCB,stroke:#4A7C59,color:#1C3B22,stroke-width:1px;
+
+    ROOT[ChikitsaLipi /] :::root
+
+    ROOT --> README[README.md] :::file
+    ROOT --> BUILD[build.gradle.kts] :::file
+    ROOT --> SETTINGS[settings.gradle.kts] :::file
+    ROOT --> GRADLE_DIR[gradle /] :::dir
+    ROOT --> APP_DIR[app /] :::dir
+
+    GRADLE_DIR --> TOML[libs.versions.toml] :::file
+
+    APP_DIR --> APP_BUILD[build.gradle.kts] :::file
+    APP_DIR --> SRC_DIR[src / main / java / org / chikitsalipi /] :::dir
+
+    SRC_DIR --> MAIN_ACT[MainActivity.kt - Primary Application Entry] :::module
+    SRC_DIR --> CAM[camera / - CameraX Management] :::module
+    SRC_DIR --> EXT[extraction / - Medical Field Extraction] :::module
+    SRC_DIR --> MDL[model / - Domain Data Objects] :::module
+    SRC_DIR --> OCR[ocr / - ML Kit Text Recognition] :::module
+    SRC_DIR --> PRE[preprocessing / - Image Filters & Crop] :::module
+    SRC_DIR --> STO[storage / - Room DB & Keystore] :::module
+    SRC_DIR --> TRN[translation / - Multilingual Handlers] :::module
+    SRC_DIR --> UI[ui / - Jetpack Compose UI & Theme] :::module
+    SRC_DIR --> VER[verification / - Human Verification Rules] :::module
 ```
 
 ---
