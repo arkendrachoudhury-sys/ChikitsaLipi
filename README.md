@@ -24,7 +24,37 @@ The central design philosophy prioritizes human-in-the-loop verification, transp
 
 ## System Architecture
 
-The application is built following Clean Architecture and MVVM (Model-View-ViewModel) design principles, enforcing strict separation of concerns across nine functional layers:
+The application is built following Clean Architecture and MVVM (Model-View-ViewModel) design principles, enforcing strict separation of concerns across functional layers aligned directly with the system flowchart:
+
+```
+Camera Input
+      ↓
+Image Quality Assessment
+      ↓
+Image Preprocessing
+      ↓
+OCR Engine
+      ↓
+OCR Text + Bounding Boxes
+      ↓
+Language Identification
+      ↓
+Medical Entity Extraction
+      ↓
+Value and Unit Detection
+      ↓
+Validation
+      ↓
+Confidence / Uncertainty Assessment
+      ↓
+Translation
+      ↓
+User Verification
+      ↓
+Local Encrypted Storage
+      ↓
+Record Retrieval / Export
+```
 
 ```
 +-------------------------------------------------------------------+
@@ -190,6 +220,177 @@ Recommended typography engines: Google Sans or Inter for Latin script; Noto Sans
 
 ---
 
+## Complete Interaction and Navigation Model
+
+Design ChikitsaLipi around a predictable, shallow, state-driven navigation model.
+
+The navigation system ensures that users can always understand:
+1. Where they are
+2. What the application is doing
+3. What information has been extracted
+4. What requires verification
+5. What action is available next
+6. What will happen if they press Back
+7. Whether information has been saved
+8. Whether an operation can be cancelled safely
+
+The application avoids hidden navigation, ambiguous gestures, irreversible actions without confirmation, and navigation states that can cause accidental loss of captured health information.
+
+### Navigation Architecture
+
+Use a single primary application navigation graph:
+
+```text
+Home
+├── Capture
+│   ├── Camera Permission
+│   ├── Camera Viewfinder
+│   ├── Capture Preview
+│   └── Processing
+│       ├── Processing Success
+│       ├── Processing Failure
+│       └── Processing Cancelled
+│
+├── Saved Records
+│   ├── Search
+│   ├── Filters
+│   └── Record Detail
+│       ├── Source Document
+│       ├── OCR Text
+│       ├── Structured Fields
+│       ├── Translation
+│       ├── Field Editor
+│       ├── Export
+│       └── Delete Confirmation
+│
+└── Settings
+    ├── Interface Language
+    ├── Translation Settings
+    ├── Accessibility
+    ├── Storage
+    └── Privacy Information
+```
+
+Primary user journey:
+**Home → Capture → Preview → Processing → Review → Verify → Save → Record Detail**
+
+Secondary user journey:
+**Home → Saved Records → Record Detail → Review/Edit/Export/Delete**
+
+### Navigation Principles
+
+1. Home is the root destination.
+2. Every major screen provides an obvious way to return to the previous state.
+3. The Android system Back action behaves consistently with the visible navigation hierarchy.
+4. Back navigation never silently discards unsaved medical information.
+5. Destructive operations require explicit confirmation.
+6. Processing operations are cancellable where technically safe.
+7. Navigation does not restart OCR unnecessarily.
+8. Previously completed processing stages are not repeated unless the user explicitly requests reprocessing.
+9. Temporary state is preserved during ordinary configuration changes such as screen rotation.
+10. Navigation state survives temporary backgrounding where technically feasible.
+11. The application distinguishes temporary processing state from permanently saved records.
+12. A user can never mistake a draft record for a saved record.
+
+### Navigation State Model
+
+Explicit application states:
+
+`IDLE` → `CAPTURE_READY` → `CAPTURED` → `IMAGE_REVIEW` → `PROCESSING` → `OCR_COMPLETE` → `EXTRACTION_COMPLETE` → `TRANSLATION_COMPLETE` → `REVIEW_REQUIRED` → `EDITING_FIELD` → `USER_VERIFIED` → `READY_TO_SAVE` → `SAVED` → `EXPORTING` → `DELETE_CONFIRMATION` → `DELETED`
+
+Transition diagram:
+
+```text
+IDLE → CAPTURE_READY → CAPTURED → IMAGE_REVIEW → PROCESSING → OCR_COMPLETE → EXTRACTION_COMPLETE → TRANSLATION_COMPLETE → REVIEW_REQUIRED → USER_VERIFIED → READY_TO_SAVE → SAVED
+```
+
+Failure states return the user to an actionable state rather than creating a dead end.
+
+### Navigation Graph (Mermaid Diagram)
+
+```mermaid
+flowchart TD
+    A[Home] --> B[Digitize New Health Record]
+    A --> C[Saved Records]
+    A --> D[Settings]
+
+    B --> E{Camera Permission}
+    E -->|Granted| F[Camera]
+    E -->|Denied| G[Permission Explanation]
+    G -->|Retry| E
+    G -->|Use Gallery| H[Gallery Picker]
+
+    F --> I[Capture Image]
+    F --> H
+    H --> J[Image Preview]
+    I --> J
+
+    J -->|Retake| F
+    J -->|Use Image| K[Processing]
+
+    K --> L{Processing Result}
+    L -->|Failure| M[Processing Error]
+    M -->|Retry| K
+    M -->|Retake| F
+    L -->|Success| N[Review Extracted Record]
+
+    N --> O[Field Detail]
+    O --> P[Source Image Region]
+    O --> Q[Translation]
+    O --> R[Text to Speech]
+    O --> S[Edit Field]
+
+    S --> T[Field Editor]
+    T -->|Cancel| O
+    T -->|Confirm| U[User Verified Field]
+    U --> O
+
+    N --> V{Save}
+    V --> W[Local Encrypted Storage]
+    W --> X[Record Detail]
+
+    C --> Y[Search and Filter]
+    Y --> X
+
+    X --> O
+    X --> Z[Export]
+    X --> AA[Delete Confirmation]
+
+    AA -->|Cancel| X
+    AA -->|Delete| AB[Record Deleted]
+    AB --> C
+
+    X --> C
+    D --> A
+```
+
+### Interaction State Matrix
+
+| Current State | User Action | Next State | Data Preserved | Confirmation Required |
+| :--- | :--- | :--- | :--- | :--- |
+| Home | Digitize | Camera | No record data | No |
+| Camera | Capture | Preview | Temporary image | No |
+| Preview | Retake | Camera | Previous image discarded | No |
+| Preview | Use Image | Processing | Temporary image | No |
+| Processing | Cancel | Home/Camera | Temporary state cleaned | Conditional |
+| Processing | Success | Review | Extracted data | No |
+| Review | Edit | Field Editor | Original OCR preserved | No |
+| Field Editor | Confirm | Review | Correction stored | No |
+| Review | Save | Record Detail | Full record persisted | Optional |
+| Review | Back | Previous state | Unsaved state preserved | Conditional |
+| Record Detail | Export | Export | Record preserved | Yes |
+| Record Detail | Delete | Confirmation | Record preserved until confirmation | Yes |
+| Delete Confirmation | Delete | Saved Records | Record removed | Yes |
+
+### Interaction Design for Medical Uncertainty, Numeric Values, and Handwriting
+
+- **Medical Uncertainty**: Uncertainty is treated as a first-class interaction state. Low-confidence fields are explicitly tagged (`Needs Review`, `Unit not detected`) with dynamic links allowing users to view source image bounding box regions before editing or verifying.
+- **Numeric Medical Values**: Numerical values retain original decimals, slashes, and units without automatic rounding or truncation. Medical keypads strictly present digits 0-9, decimal (`.`), and slash (`/`).
+- **Handwritten Records**: Handwritten documents trigger a clear non-blocking advisory encouraging explicit visual side-by-side comparison with the original document snippet.
+- **Accessibility & Privacy**: Full TalkBack content descriptions for screen elements, minimum touch target size (56dp to 72dp), dynamic font scaling support, and total suppression of sensitive health data from system notifications or recent application previews.
+
+---
+
 ## Screen-by-Screen Specification
 
 ### 1. Home Screen
@@ -344,6 +545,8 @@ ChikitsaLipi/
 ├── build.gradle.kts
 ├── settings.gradle.kts
 ├── gradle.properties
+├── gradle/
+│   └── libs.versions.toml
 ├── app/
 │   ├── build.gradle.kts
 │   └── src/
