@@ -43,59 +43,16 @@ flowchart TD
     SA13 --> SA14[Record Retrieval / Export]
 ```
 
-```
-+-------------------------------------------------------------------+
-|                        Presentation Layer                         |
-|    (Jetpack Compose UI, Dynamic Font Scaling, Accessibility)     |
-+-------------------------------------------------------------------+
-                                  |
-                                  v
-+-------------------------------------------------------------------+
-|                         Camera Layer                              |
-|          (CameraX, Real-Time Quality Assessment, Framing)         |
-+-------------------------------------------------------------------+
-                                  |
-                                  v
-+-------------------------------------------------------------------+
-|                    Image Processing Layer                         |
-|     (Perspective Correction, Binarization, Contrast, Crop)        |
-+-------------------------------------------------------------------+
-                                  |
-                                  v
-+-------------------------------------------------------------------+
-|                          OCR Layer                                |
-|  (Google ML Kit Text Recognition: Latin, Devanagari, Bengali)    |
-+-------------------------------------------------------------------+
-                                  |
-                                  v
-+-------------------------------------------------------------------+
-|                     Text Processing Layer                         |
-|      (Language Identification, Cleaning, Line Segmentation)       |
-+-------------------------------------------------------------------+
-                                  |
-                                  v
-+-------------------------------------------------------------------+
-|                   Medical Extraction Layer                        |
-|   (Regex, Clinical Dictionaries, Value & Unit Pattern Matching)   |
-+-------------------------------------------------------------------+
-                                  |
-                                  v
-+-------------------------------------------------------------------+
-|                 Verification & Validation Layer                   |
-|  (Confidence Scoring, Consistency Rules, Uncertainty Tagging)     |
-+-------------------------------------------------------------------+
-                                  |
-                                  v
-+-------------------------------------------------------------------+
-|                    Translation Subsystem                          |
-|    (English -> Bengali / Hindi, Value & Unit Parity Assurance)    |
-+-------------------------------------------------------------------+
-                                  |
-                                  v
-+-------------------------------------------------------------------+
-|                   Storage & Export Layer                          |
-|     (Room Database, Android Keystore, Local JSON/PDF Export)      |
-+-------------------------------------------------------------------+
+```mermaid
+flowchart TD
+    L1["Presentation Layer<br/>(Jetpack Compose UI, Dynamic Font Scaling, Accessibility)"] --> L2["Camera Layer<br/>(CameraX, Real-Time Quality Assessment, Framing)"]
+    L2 --> L3["Image Processing Layer<br/>(Perspective Correction, Binarization, Contrast, Crop)"]
+    L3 --> L4["OCR Layer<br/>(Google ML Kit Text Recognition: Latin, Devanagari, Bengali)"]
+    L4 --> L5["Text Processing Layer<br/>(Language Identification, Cleaning, Line Segmentation)"]
+    L5 --> L6["Medical Extraction Layer<br/>(Regex, Clinical Dictionaries, Value & Unit Pattern Matching)"]
+    L6 --> L7["Verification & Validation Layer<br/>(Confidence Scoring, Consistency Rules, Uncertainty Tagging)"]
+    L7 --> L8["Translation Subsystem<br/>(English -> Bengali / Hindi, Value & Unit Parity Assurance)"]
+    L8 --> L9["Storage & Export Layer<br/>(Room Database, Android Keystore, Local JSON/PDF Export)"]
 ```
 
 ### Detailed Flowchart
