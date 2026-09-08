@@ -33,7 +33,10 @@ android {
 
     buildTypes {
         release {
-            signingConfig = signingConfigs.getByName("release")
+            val relSigningConfig = signingConfigs.findByName("release")
+            if (relSigningConfig?.storeFile?.exists() == true) {
+                signingConfig = relSigningConfig
+            }
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -71,8 +74,6 @@ dependencies {
 
     // ML Kit Text Recognition
     implementation(libs.google.mlkit.text.recognition)
-    implementation(libs.google.mlkit.text.recognition.devanagari)
-    implementation(libs.google.mlkit.text.recognition.bengali)
 
     // Room
     implementation(libs.androidx.room.runtime)
