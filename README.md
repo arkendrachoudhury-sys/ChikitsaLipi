@@ -1,3 +1,15 @@
+## 📱 Download & Installation
+
+Click the button below to download the compiled application directly to your Android device:
+
+[![Download APK](https://img.shields.io/badge/Download-ChikitsaLipi%20v1.0%20APK-2ea44f?style=for-the-badge&logo=android)](https://github.com/arkendrachoudhury-sys/ChikitsaLipi/releases/download/v1.0.0/ChikitsaLipi_v1.0.apk)
+
+*Direct Link:* [Download ChikitsaLipi v1.0 APK](https://github.com/arkendrachoudhury-sys/ChikitsaLipi/releases/download/v1.0.0/ChikitsaLipi_v1.0.apk)
+
+> **Note:** If installing outside of the Google Play Store, ensure "Install from Unknown Sources" is enabled in your Android settings.
+
+---
+
 # ChikitsaLipi: Android Application for OCR-Based Digitization, Structured Extraction, and Multilingual Translation of Printed and Handwritten Health Records
 
 ## Summary
