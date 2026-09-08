@@ -496,6 +496,13 @@ ChikitsaLipi application builds and downloadable artifacts are generated via the
 - **Design System Asset**: `assets/13241089420966386541`
 
 ---
+## ChikitsaLipi v1.0
+
+Fully functional application package build:
+- **ChikitsaLipi v1.0 Release**: [https://mcp.lovable.dev/?src=settings](https://mcp.lovable.dev/?src=settings)
+
+---
+
 
 ## Usage
 
