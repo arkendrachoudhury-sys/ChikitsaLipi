@@ -5,6 +5,7 @@ import android.net.Uri
 import android.util.Log
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
+import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import java.io.File
 
 object MlKitOcrProcessor {
@@ -15,7 +16,7 @@ object MlKitOcrProcessor {
     ) {
         try {
             val inputImage = InputImage.fromFilePath(context, Uri.fromFile(imageFile))
-            val recognizer = TextRecognition.getClient()
+            val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
 
             recognizer.process(inputImage)
                 .addOnSuccessListener { visionText ->
