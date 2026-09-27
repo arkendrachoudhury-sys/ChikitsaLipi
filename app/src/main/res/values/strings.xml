@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ChikitsaLipi</string>
+    <string name="home_title">ChikitsaLipi</string>
+    <string name="home_subtitle">Digital Health Record</string>
+    <string name="digitize_record">DIGITIZE NEW HEALTH RECORD</string>
+    <string name="digitize_caption">Photograph a prescription, laboratory report, or clinical note.</string>
+    <string name="saved_records">SAVED RECORDS</string>
+    <string name="saved_caption">View, search, verify, and manage digitized records.</string>
+    <string name="privacy_notice">Your records are processed locally on device and remain under your complete control.</string>
+</resources>

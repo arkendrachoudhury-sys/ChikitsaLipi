@@ -1,5 +1,6 @@
 package org.chikitsalipi.ui
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -9,9 +10,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.chikitsalipi.export.JsonExporter
+import org.chikitsalipi.export.PdfExporter
 import org.chikitsalipi.model.HealthRecord
 import org.chikitsalipi.ui.theme.ForestTeal
 import org.chikitsalipi.ui.theme.WarmOffWhite
@@ -24,6 +28,19 @@ fun DirectoryScreen(
     onBack: () -> Unit
 ) {
     var searchQuery by remember { mutableStateOf("") }
+    val context = LocalContext.current
+
+    val filteredRecords = remember(savedRecords, searchQuery) {
+        if (searchQuery.isBlank()) {
+            savedRecords
+        } else {
+            savedRecords.filter { rec ->
+                rec.recordId.contains(searchQuery, ignoreCase = true) ||
+                        rec.category.name.contains(searchQuery, ignoreCase = true) ||
+                        rec.rawOcrText.contains(searchQuery, ignoreCase = true)
+            }
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -47,14 +64,14 @@ fun DirectoryScreen(
             OutlinedTextField(
                 value = searchQuery,
                 onValueChange = { searchQuery = it },
-                label = { Text("Search records by ID or text...") },
+                label = { Text("Search records by ID, category, or text...") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            if (savedRecords.isEmpty()) {
+            if (filteredRecords.isEmpty()) {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -62,7 +79,9 @@ fun DirectoryScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "No saved records found in local database.\nDigitize a record from the Home screen.",
+                        text = if (savedRecords.isEmpty())
+                            "No saved records found in local database.\nDigitize a record from the Home screen."
+                        else "No records match search: \"$searchQuery\"",
                         color = Color.Gray,
                         fontSize = 14.sp
                     )
@@ -72,7 +91,7 @@ fun DirectoryScreen(
                     modifier = Modifier.weight(1f),
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    items(savedRecords) { rec ->
+                    items(filteredRecords) { rec ->
                         Card(
                             modifier = Modifier.fillMaxWidth(),
                             colors = CardDefaults.cardColors(containerColor = WarmOffWhite),
@@ -93,7 +112,13 @@ fun DirectoryScreen(
                                     modifier = Modifier.fillMaxWidth(),
                                     horizontalArrangement = Arrangement.End
                                 ) {
-                                    TextButton(onClick = { /* JSON / PDF Export action */ }) {
+                                    TextButton(onClick = {
+                                        val jsonFile = JsonExporter.exportRecordToJson(context, rec)
+                                        val pdfFile = PdfExporter.exportRecordToPdf(context, rec)
+                                        if (jsonFile != null && pdfFile != null) {
+                                            Toast.makeText(context, "Exported JSON & PDF successfully", Toast.LENGTH_SHORT).show()
+                                        }
+                                    }) {
                                         Text("EXPORT RECORD (JSON/PDF)", fontSize = 11.sp, color = ForestTeal)
                                     }
                                 }

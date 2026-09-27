@@ -20,7 +20,7 @@ jobs:
           java-version: '17'
 
       - name: Grant Execute Permission for Gradlew
-        run: chmod +x gradlew || true
+        run: chmod +x gradlew
 
       - name: Decode Keystore from Secrets
         env:
@@ -36,7 +36,7 @@ jobs:
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
-          ./gradlew assembleRelease || echo "Release build step completed"
+          ./gradlew assembleRelease
 
       - name: Rename Output APK
         run: |

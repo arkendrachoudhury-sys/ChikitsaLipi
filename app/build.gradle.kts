@@ -80,6 +80,9 @@ dependencies {
     implementation(libs.androidx.room.ktx)
     kapt(libs.androidx.room.compiler)
 
+    // Gson
+    implementation("com.google.code.gson:gson:2.10.1")
+
     // Coroutines
     implementation(libs.kotlinx.coroutines.android)
 
