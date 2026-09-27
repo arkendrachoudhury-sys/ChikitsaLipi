@@ -8,6 +8,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import kotlinx.coroutines.launch
+import org.chikitsalipi.data.AppDatabase
+import org.chikitsalipi.data.HealthRecordRepository
 import org.chikitsalipi.model.HealthRecord
 import org.chikitsalipi.ui.*
 import org.chikitsalipi.ui.theme.ChikitsaLipiTheme
@@ -30,8 +34,24 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun ChikitsaLipiApp() {
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+
+    val repository = remember {
+        val db = AppDatabase.getDatabase(context)
+        HealthRecordRepository(db.healthRecordDao())
+    }
+
     val navState = remember { AppNavigationState() }
     val savedRecordsList = remember { mutableStateListOf<HealthRecord>() }
+
+    LaunchedEffect(Unit) {
+        coroutineScope.launch {
+            val records = repository.getAllRecords()
+            savedRecordsList.clear()
+            savedRecordsList.addAll(records)
+        }
+    }
 
     when (navState.currentScreen) {
         Screen.HOME -> {
@@ -58,8 +78,11 @@ fun ChikitsaLipiApp() {
                     record = record,
                     selectedLanguage = navState.selectedLanguage,
                     onSaveRecord = { rec ->
-                        if (!savedRecordsList.any { it.recordId == rec.recordId }) {
-                            savedRecordsList.add(rec)
+                        coroutineScope.launch {
+                            repository.insertRecord(rec)
+                            if (!savedRecordsList.any { it.recordId == rec.recordId }) {
+                                savedRecordsList.add(rec)
+                            }
                         }
                     },
                     onBack = { navState.currentScreen = Screen.HOME }

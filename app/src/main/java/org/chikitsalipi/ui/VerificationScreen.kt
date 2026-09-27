@@ -1,5 +1,7 @@
 package org.chikitsalipi.ui
 
+import android.speech.tts.TextToSpeech
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -11,11 +13,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.chikitsalipi.data.GsonProvider
 import org.chikitsalipi.model.*
 import org.chikitsalipi.ui.theme.*
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -25,7 +30,35 @@ fun VerificationScreen(
     onSaveRecord: (HealthRecord) -> Unit,
     onBack: () -> Unit
 ) {
+    val context = LocalContext.current
     var isSaved by remember { mutableStateOf(false) }
+
+    var ttsEngine by remember { mutableStateOf<TextToSpeech?>(null) }
+    var isTtsReady by remember { mutableStateOf(false) }
+
+    DisposableEffect(context) {
+        val tts = TextToSpeech(context) { status ->
+            if (status == TextToSpeech.SUCCESS) {
+                isTtsReady = true
+            }
+        }
+        ttsEngine = tts
+        onDispose {
+            tts.stop()
+            tts.shutdown()
+        }
+    }
+
+    val extractedFields = remember(record.fieldsJson) {
+        try {
+            if (record.fieldsJson.isNotBlank()) {
+                val itemType = object : com.google.gson.reflect.TypeToken<List<ExtractedField>>() {}.type
+                GsonProvider.gson.fromJson<List<ExtractedField>>(record.fieldsJson, itemType) ?: emptyList()
+            } else emptyList()
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -72,7 +105,7 @@ fun VerificationScreen(
                     border = androidx.compose.foundation.BorderStroke(1.dp, Color.LightGray)
                 ) {
                     Column(modifier = Modifier.padding(12.dp)) {
-                        Text("Original Document Bounding Regions", fontWeight = FontWeight.Bold, fontSize = 13.sp, color = ForestTeal)
+                        Text("Original Document Source Info", fontWeight = FontWeight.Bold, fontSize = 13.sp, color = ForestTeal)
                         Spacer(modifier = Modifier.height(8.dp))
                         Box(
                             modifier = Modifier
@@ -82,7 +115,7 @@ fun VerificationScreen(
                                 .border(1.dp, SageSlate, RoundedCornerShape(8.dp)),
                             contentAlignment = Alignment.Center
                         ) {
-                            Text("Simulated High-Res Bounding Region View", fontSize = 11.sp, color = Color.Gray)
+                            Text("Path: ${record.imagePath}", fontSize = 10.sp, color = Color.Gray, modifier = Modifier.padding(8.dp))
                         }
                         Spacer(modifier = Modifier.height(12.dp))
                         Text("Raw Recognized Text (ML Kit OCR):", fontWeight = FontWeight.Bold, fontSize = 12.sp)
@@ -104,26 +137,22 @@ fun VerificationScreen(
                         Text("Extracted Entities & Translation", fontWeight = FontWeight.Bold, fontSize = 13.sp, color = ForestTeal)
                         Spacer(modifier = Modifier.height(8.dp))
 
-                        LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                            item {
-                                ExtractedFieldCard(
-                                    field = "Paracetamol",
-                                    value = "500 mg",
-                                    confidence = "94% (High)",
-                                    translationBn = "প্যারাসিটামল ৫০০ মিগ্রা",
-                                    translationHi = "पैरासिटामोल 500 मिग्रा",
-                                    statusColor = EmeraldHighConfidence
-                                )
-                            }
-                            item {
-                                ExtractedFieldCard(
-                                    field = "Hemoglobin",
-                                    value = "12.5 g/dL",
-                                    confidence = "65% (Needs Review)",
-                                    translationBn = "হিমোগ্লোবিন: ১২.৫ গ্রাম/ডেসিলিটার",
-                                    translationHi = "हीमोग्लोबिन: 12.5 ग्राम/डेसिलीटर",
-                                    statusColor = AmberUncertainty
-                                )
+                        if (extractedFields.isEmpty()) {
+                            Text("No structured fields extracted from text.", fontSize = 12.sp, color = Color.Gray)
+                        } else {
+                            LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                items(extractedFields) { field ->
+                                    val bnTrans = field.translations.find { it.languageCode == "bn" }?.translatedText ?: "N/A"
+                                    val hiTrans = field.translations.find { it.languageCode == "hi" }?.translatedText ?: "N/A"
+                                    ExtractedFieldCard(
+                                        field = field.fieldName,
+                                        value = "${field.extractedValue} ${field.unit ?: ""}".trim(),
+                                        confidence = "${(field.confidenceScore * 100).toInt()}% (${field.status.name})",
+                                        translationBn = bnTrans,
+                                        translationHi = hiTrans,
+                                        statusColor = if (field.confidenceScore >= 0.8f) EmeraldHighConfidence else AmberUncertainty
+                                    )
+                                }
                             }
                         }
                     }
@@ -139,7 +168,19 @@ fun VerificationScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 OutlinedButton(
-                    onClick = { /* Trigger Text To Speech narration */ },
+                    onClick = {
+                        if (isTtsReady && ttsEngine != null) {
+                            val locale = when (selectedLanguage) {
+                                AppLanguage.BENGALI -> Locale("bn", "IN")
+                                AppLanguage.HINDI -> Locale("hi", "IN")
+                                AppLanguage.ENGLISH -> Locale.US
+                            }
+                            ttsEngine?.language = locale
+                            ttsEngine?.speak(record.rawOcrText, TextToSpeech.QUEUE_FLUSH, null, "RecordTTS")
+                        } else {
+                            Toast.makeText(context, "TTS Engine Initializing...", Toast.LENGTH_SHORT).show()
+                        }
+                    },
                     border = androidx.compose.foundation.BorderStroke(1.dp, ForestTeal)
                 ) {
                     Text("🔊 TTS Narration", color = ForestTeal, fontSize = 12.sp)
@@ -183,7 +224,7 @@ fun ExtractedFieldCard(
             }
             Spacer(modifier = Modifier.height(4.dp))
             Text("Value: $value", fontSize = 12.sp, color = Color.Black)
-            Divider(modifier = Modifier.padding(vertical = 4.dp), thickness = 0.5.dp, color = Color.LightGray)
+            HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp), thickness = 0.5.dp, color = Color.LightGray)
             Text("Bengali: $translationBn", fontSize = 11.sp, color = Color.DarkGray)
             Text("Hindi: $translationHi", fontSize = 11.sp, color = Color.DarkGray)
         }
