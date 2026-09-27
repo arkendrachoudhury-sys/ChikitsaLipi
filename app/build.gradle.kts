@@ -74,6 +74,7 @@ dependencies {
 
     // ML Kit Text Recognition
     implementation(libs.google.mlkit.text.recognition)
+    implementation("com.google.mlkit:text-recognition:16.0.0")
 
     // Room
     implementation(libs.androidx.room.runtime)

@@ -1,10 +1,11 @@
 ## 📱 Download & Installation
 
-Click the button below to download the compiled application directly to your Android device:
+Download the latest published ChikitsaLipi Android build from GitHub:
 
-[![Download APK](https://img.shields.io/badge/Download-ChikitsaLipi%20v1.0%20APK-2ea44f?style=for-the-badge&logo=android)](https://github.com/arkendrachoudhury-sys/ChikitsaLipi/releases/download/v1.0.0/ChikitsaLipi_v1.0.apk)
+[![View Releases](https://img.shields.io/badge/View-ChikitsaLipi%20Releases-2ea44f?style=for-the-badge&logo=github)](https://github.com/arkendrachoudhury-sys/ChikitsaLipi/releases)
 
-*Direct Link:* [Download ChikitsaLipi v1.0 APK](https://github.com/arkendrachoudhury-sys/ChikitsaLipi/releases/download/v1.0.0/ChikitsaLipi_v1.0.apk)
+* **Release downloads:** [ChikitsaLipi Releases](https://github.com/arkendrachoudhury-sys/ChikitsaLipi/releases)
+* **CI builds:** [GitHub Actions](https://github.com/arkendrachoudhury-sys/ChikitsaLipi/actions)
 
 > **Note:** If installing outside of the Google Play Store, ensure "Install from Unknown Sources" is enabled in your Android settings.
 
@@ -496,26 +497,6 @@ The evaluation methodology uses a structured testing benchmark:
 
 ---
 
-## Application Generation and Download
-
-ChikitsaLipi application builds and downloadable artifacts are generated via the Stitch API Connector.
-
-### Direct Download & Interactive Previews
-
-- **Download Application Package (.apk)**: [ChikitsaLipi Android App Preview Package](https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ8Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpbCiVodG1sX2M1YWUzNjc5OWEzMDRkMWU4YjUzZjU0ZTU4MmRlMjk3EgsSBxCD6b6h3AUYAZIBJAoKcHJvamVjdF9pZBIWQhQxNjc5MDMzNzM1ODAyMjU1MDI4Ng&filename=ChikitsaLipi-debug.apk&opi=96797242)
-- **Results and Verification Screen Build**: [ChikitsaLipi Results Verification UI Bundle](https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ8Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpbCiVodG1sX2UzODY1NzAxZjhiZTQzYzQ4NTE2Nzk4NTVjZWZhM2Y3EgsSBxCD6b6h3AUYAZIBJAoKcHJvamVjdF9pZBIWQhQxNjc5MDMzNzM1ODAyMjU1MDI4Ng&filename=ChikitsaLipi-Verification.apk&opi=96797242)
-- **Stitch Project ID**: `16790337358022550286`
-- **Design System Asset**: `assets/13241089420966386541`
-
----
-## ChikitsaLipi v1.0
-
-Fully functional application package build:
-- **ChikitsaLipi v1.0 Release**: [https://mcp.lovable.dev/?src=settings](https://mcp.lovable.dev/?src=settings)
-
----
-
-
 ## Usage
 
 1. **Launch App**: Open ChikitsaLipi on Android device (minSdk 26).
@@ -532,28 +513,14 @@ Fully functional application package build:
 
 To reproduce experimental evaluations and baseline benchmark performance:
 
-1. Load the benchmark dataset ($n=300$) into `app/src/androidTest/assets/benchmark_dataset/`.
-2. Execute the evaluation suite:
+1. Execute the evaluation suite / unit tests:
    ```bash
-   ./gradlew connectedAndroidTest
+   ./gradlew test
    ```
-3. Automated test logs output exact CER, WER, $A_{field}$, $A_{value}$, $A_{unit}$, and $R_{proc}$ metrics to `app/build/reports/androidTests/`.
-
----
-
-## Testing Strategy
-
-The repository includes a multi-tiered test suite:
-
-- **Unit Tests**: Test regular expressions, entity parser logic, unit normalizers, and data model mappings.
-  ```bash
-  ./gradlew test
-  ```
-- **UI Tests**: Test Compose screen renders, button touch target compliance, and accessibility node hierarchy.
-  ```bash
-  ./gradlew connectedAndroidTest
-  ```
-- **Preprocessing Tests**: Test image cropping algorithms, rotation correction, and binarization filters against baseline benchmark images.
+2. Build debug APK:
+   ```bash
+   ./gradlew assembleDebug
+   ```
 
 ---
 
@@ -578,37 +545,6 @@ The repository includes a multi-tiered test suite:
 ## Conclusion
 
 ChikitsaLipi addresses the practical challenge of preserving and accessing clinical health information locked in physical health records. By uniting on-device OCR, structured field extraction, numerical invariance guarantees, regional multilingual translation (Bengali and Hindi), transparent uncertainty presentation, and local encrypted preservation, ChikitsaLipi establishes a robust foundation for biomedical informatics research and digital health accessibility in resource-constrained environments.
-
----
-
-## Future Work
-
-1. Incorporation of offline deep neural networks fine-tuned specifically on regional medical handwriting.
-2. Support for additional South Asian regional languages (e.g., Tamil, Telugu, Marathi, Odia).
-3. Fast Healthcare Interoperability Resources (FHIR) JSON schema export for integration with hospital electronic health record (EHR) systems.
-4. Advanced layout-aware document layout analysis (DLA) using vision transformers.
-5. On-device neural machine translation model integration for full offline translation capability.
-
----
-
-## Scientific Software Statement
-
-ChikitsaLipi is an open-source scientific software repository intended for biomedical informatics research, public health record preservation, and accessibility studies. It provides an extensible, reproducible reference framework for studying offline medical text digitization and multilingual extraction.
-
----
-
-## Citation
-
-If you use ChikitsaLipi in your research, please cite:
-
-```bibtex
-@article{chikitsalipi2026,
-  title={ChikitsaLipi: Android Framework for OCR-Based Digitization, Structured Extraction, and Multilingual Preservation of Physical Health Records},
-  author={ChikitsaLipi Research Group},
-  journal={Journal of Biomedical Informatics Software},
-  year={2026}
-}
-```
 
 ---
 
